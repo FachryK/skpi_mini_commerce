@@ -5,8 +5,11 @@ import catalog_service.catalog_service.dto.ProductResponse;
 import catalog_service.catalog_service.dto.StatusUpdateRequest;
 import catalog_service.catalog_service.dto.StockAdjustmentRequest;
 import catalog_service.catalog_service.dto.StockUpdateRequest;
+import catalog_service.catalog_service.model.ProductStatus;
 import catalog_service.catalog_service.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,10 +17,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -35,8 +37,12 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponse> findAll() {
-        return productService.findAll();
+    public Page<ProductResponse> findAll(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) ProductStatus status,
+            Pageable pageable
+    ) {
+        return productService.findAll(search, status, pageable);
     }
 
     @GetMapping("/{id}")

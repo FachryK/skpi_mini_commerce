@@ -6,11 +6,11 @@ import catalog_service.catalog_service.dto.ProductResponse;
 import catalog_service.catalog_service.model.Product;
 import catalog_service.catalog_service.model.ProductStatus;
 import catalog_service.catalog_service.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class ProductService {
@@ -37,10 +37,9 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductResponse> findAll() {
-        return productRepository.findAll().stream()
-                .map(ProductResponse::from)
-                .toList();
+    public Page<ProductResponse> findAll(String search, ProductStatus status, Pageable pageable) {
+        String normalizedSearch = (search == null || search.isBlank()) ? null : search.trim();
+        return productRepository.search(normalizedSearch, status, pageable).map(ProductResponse::from);
     }
 
     @Transactional(readOnly = true)

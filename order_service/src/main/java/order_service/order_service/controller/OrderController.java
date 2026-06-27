@@ -3,6 +3,7 @@ package order_service.order_service.controller;
 import jakarta.validation.Valid;
 import order_service.order_service.dto.CreateOrderRequest;
 import order_service.order_service.dto.OrderResponse;
+import order_service.order_service.model.OrderStatus;
 import order_service.order_service.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,8 +35,8 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<OrderResponse> findAll(Authentication authentication) {
-        return orderService.findAll(authentication);
+    public List<OrderResponse> findAll(@RequestParam(required = false) OrderStatus status, Authentication authentication) {
+        return orderService.findAll(status, authentication);
     }
 
     @GetMapping("/{id}")

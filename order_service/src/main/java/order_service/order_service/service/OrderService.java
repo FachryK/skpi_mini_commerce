@@ -77,12 +77,11 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<OrderResponse> findAll(Authentication authentication) {
-        List<CustomerOrder> orders = isAdmin(authentication)
-                ? orderRepository.findAll()
-                : orderRepository.findByCustomerEmailIgnoreCase(authentication.getName());
-
-        return orders.stream().map(OrderResponse::from).toList();
+    public List<OrderResponse> findAll(OrderStatus status, Authentication authentication) {
+        String customerEmail = isAdmin(authentication) ? null : authentication.getName();
+        return orderRepository.search(customerEmail, status).stream()
+                .map(OrderResponse::from)
+                .toList();
     }
 
     @Transactional(readOnly = true)
